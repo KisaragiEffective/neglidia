@@ -2,10 +2,15 @@
   "name": "@kisaragieffective/neglidia",
   "version": "0.1.0",
   "description": "looseruler-protocol implementor",
-  "main": "src/index.js",
+  "main": "./dist/index.js",
   "scripts": {
-    "launch": "npx tsc && node ./dist/index.js"
+    "launch": "pnpm install && pnpm exec tsc && node ./dist/index.js"
   },
+  "engines": {
+    "node": "^22.6.0",
+    "pnpm": "^9.7.0"
+  },
+  "engineStrict": true,
   "author": "KisaragiEffective",
   "license": "BSD-4-Clause",
   "devDependencies": {
