@@ -19,7 +19,7 @@
     "@types/babel__core": "^7.20.5",
     "@types/node": "^22.1.0",
     "@types/yargs": "^17.0.33",
-    "eslint": "9.x",
+    "eslint": "^9.9.0",
     "globals": "^15.9.0",
     "typescript": "^5.5.4",
     "typescript-eslint": "^8.0.1"
