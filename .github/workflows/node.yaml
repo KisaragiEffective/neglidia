@@ -16,12 +16,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: Setup PNPM
+      uses: pnpm/action-setup@v4
     - name: Use Node.js 22.6.0
       uses: actions/setup-node@v4
       with:
         node-version: 22.6.0
         cache: 'pnpm'
-    - name: Setup PNPM
-      uses: pnpm/action-setup@v4
     - run: pnpm install --frozen-lockfile
     - run: pnpm typecheck
