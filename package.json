@@ -1,0 +1,29 @@
+{
+  "name": "@kisaragieffective/neglidia",
+  "version": "0.1.0",
+  "description": "looseruler-protocol implementor",
+  "main": "src/index.js",
+  "scripts": {
+    "launch": "npx tsc && node ./dist/index.js"
+  },
+  "author": "KisaragiEffective",
+  "license": "BSD-4-Clause",
+  "devDependencies": {
+    "@eslint/js": "^9.9.0",
+    "@types/babel__core": "^7.20.5",
+    "@types/node": "^22.1.0",
+    "@types/yargs": "^17.0.33",
+    "eslint": "9.x",
+    "globals": "^15.9.0",
+    "typescript": "^5.5.4",
+    "typescript-eslint": "^8.0.1"
+  },
+  "dependencies": {
+    "@babel/core": "^7.25.2",
+    "@babel/preset-typescript": "^7.24.7",
+    "@vue/compiler-dom": "^3.4.36",
+    "yargs": "^17.7.2"
+  },
+  "type": "module",
+  "packageManager": "pnpm@9.7.0+sha512.dc09430156b427f5ecfc79888899e1c39d2d690f004be70e05230b72cb173d96839587545d09429b55ac3c429c801b4dc3c0e002f653830a420fa2dd4e3cf9cf"
+}
