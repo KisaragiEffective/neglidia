@@ -1,5 +1,5 @@
 import babel from '@babel/core';
-import { Cast, make2, Values } from './types.js';
+import { Cast, Values, zip } from './types.js';
 
 function isNotPatternRelatedExpression<
 	A extends Values<babel.types.ObjectExpression["properties"]>
@@ -63,13 +63,6 @@ function definitelyDifferentBabelExpression(left: babel.types.Expression, right:
 }
 
 export function definitelyDifferentArrayInitializers(left: babel.types.Expression[], right: babel.types.Expression[]) {
-	function* zip<T>(left: readonly T[], right: readonly T[]) {
-		const len = left.length;
-		for (let i = 0; i < len; i++) {
-			yield make2(left[i], right[i]);
-		}
-	}
-
 	if (left.length !== right.length) {
 		return true;
 	}
