@@ -4,7 +4,8 @@
   "description": "looseruler-protocol implementor",
   "main": "./dist/index.js",
   "scripts": {
-    "launch": "pnpm install && pnpm exec tsc && node ./dist/index.js"
+    "launch": "pnpm exec tsc && node ./dist/index.js",
+    "typecheck": "pnpm exec tsc --noEmit"
   },
   "engines": {
     "node": "^22.6.0",
