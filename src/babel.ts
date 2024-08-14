@@ -1,15 +1,18 @@
-import babel from '@babel/core';
-import { Cast, make2, Values } from './types.js';
+import babel from '@babel/core/index.js';
+import { Cast, Values, zip } from './types.js';
+import {
+	Expression,
+	ObjectExpression,
+	ObjectProperty, Program,
+	Statement,
+	StringLiteral,
+	VariableDeclarator,
+	Node,
+} from '@babel/types';
 
 function isNotPatternRelatedExpression<
-	A extends Values<babel.types.ObjectExpression["properties"]>
->(a: A): a is (
-	Cast<A, babel.types.ObjectProperty>
-	& {
-	value: {
-		type: Exclude<(Cast<A, babel.types.ObjectProperty>)["value"]["type"], PatternKinds>
-	}
-}) {
+	A extends Values<ObjectExpression["properties"]>
+>(a: A): a is DirectlyInitializedObjectExpression<A> {
 	return a.type === "ObjectProperty"
 		&& a.value.type !== "ArrayPattern"
 		&& a.value.type !== "AssignmentPattern"
@@ -17,6 +20,13 @@ function isNotPatternRelatedExpression<
 		&& a.value.type !== "RestElement";
 }
 
+type DirectlyInitializedObjectExpression<A> = (
+	Cast<A, ObjectProperty>
+	& {
+	value: {
+		type: Exclude<(Cast<A, ObjectProperty>)["value"]["type"], PatternKinds>
+	}
+});
 type PatternKinds = "ArrayPattern" | "AssignmentPattern" | "ObjectPattern" | "RestElement";
 
 /**
@@ -24,7 +34,7 @@ type PatternKinds = "ArrayPattern" | "AssignmentPattern" | "ObjectPattern" | "Re
  * @param left
  * @param right
  */
-function definitelyDifferentBabelExpression(left: babel.types.Expression, right: babel.types.Expression): boolean {
+function definitelyDifferentBabelExpression(left: Expression, right: Expression): boolean {
 	if (left === right) {
 		return false;
 	}
@@ -35,7 +45,7 @@ function definitelyDifferentBabelExpression(left: babel.types.Expression, right:
 
 	if (left.type === "ObjectExpression") {
 		const l = left;
-		const r = right as babel.types.ObjectExpression;
+		const r = right as ObjectExpression;
 		if (l.properties === r.properties) {
 			return false;
 		}
@@ -54,21 +64,14 @@ function definitelyDifferentBabelExpression(left: babel.types.Expression, right:
 			});
 	} else if (left.type === "StringLiteral") {
 		const l = left;
-		const r = right as babel.types.StringLiteral;
+		const r = right as StringLiteral;
 		return l.value !== r.value;
 	} else {
 		throw new RangeError(`unsupported expression type: ${left.type}`);
 	}
 }
 
-export function definitelyDifferentArrayInitializers(left: babel.types.Expression[], right: babel.types.Expression[]) {
-	function* zip<T>(left: readonly T[], right: readonly T[]) {
-		const len = left.length;
-		for (let i = 0; i < len; i++) {
-			yield make2(left[i], right[i]);
-		}
-	}
-
+export function definitelyDifferentArrayInitializers(left: Expression[], right: Expression[]) {
 	if (left.length !== right.length) {
 		return true;
 	}
@@ -83,8 +86,8 @@ export function definitelyDifferentArrayInitializers(left: babel.types.Expressio
 }
 
 function tryExtractInitializer<
-	R extends babel.types.Node & { body: babel.types.Statement[] }
->(root: R, declarationIdentifier: string): babel.types.VariableDeclarator[][] {
+	R extends Node & { body: Statement[] }
+>(root: R, declarationIdentifier: string): VariableDeclarator[][] {
 	// TODO: var [a, b] = [c, d] や var {a, b} = { a: c, b: d } にも対応するべき時が来たらそうする
 	return root.body
 		.filter(a => a.type === "VariableDeclaration")
@@ -92,7 +95,7 @@ function tryExtractInitializer<
 		.map(a => a.declarations);
 }
 
-export function extractInitializerLogic(program: babel.types.Program, identifier: string) {
+export function extractInitializerLogic(program: Program, identifier: string) {
 	const patreonWithIconDeclarationCandidates = tryExtractInitializer(program, identifier)
 		.flatMap(a => a.filter(b => !!b.init));
 
@@ -123,7 +126,7 @@ export function extractInitializerLogic(program: babel.types.Program, identifier
 
 	return {
 		node: valueOfPatreonWithIcon,
-		initializers: e as babel.types.Expression[],
+		initializers: e as Expression[],
 	}
 }
 

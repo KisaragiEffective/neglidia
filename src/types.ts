@@ -36,3 +36,10 @@ export type Exactly<A, B> = [A] extends [B]
 	: { error: "A is not assignable to B" };
 
 export function assertTypeAssignability<A>(a: A) { return a; }
+
+export function* zip<T>(left: readonly T[], right: readonly T[]) {
+	const len = left.length;
+	for (let i = 0; i < len; i++) {
+		yield make2(left[i], right[i]);
+	}
+}

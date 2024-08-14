@@ -8,6 +8,7 @@ import {
 import { parse as parseVueDOM } from '@vue/compiler-dom';
 import { definitelyDifferentArrayInitializers } from './babel.js';
 import { assertTypeAssignability, Exactly } from './types.js';
+import { notComputedMarker, type Status } from './status.js';
 
 export async function run(args: Readonly<{ old: string, new: string, out?: string }>) {
 	const sources = await Promise.all([
@@ -19,9 +20,6 @@ export async function run(args: Readonly<{ old: string, new: string, out?: strin
 	const templateOld = findComponentTemplateOrFail(oldRoot);
 	const templateNew = findComponentTemplateOrFail(newRoot);
 
-	const notComputedMarker = Symbol();
-	type Status = { diffAction: 'not computed', reason: typeof notComputedMarker }
-		| { diffAction: 'drop' | 'keep' | 'left', reason: string };
 	const processingResult: { specialThanks: Status, patreon: Status } = {
 		specialThanks: { diffAction: 'not computed', reason: notComputedMarker },
 		patreon: { diffAction: 'not computed', reason: notComputedMarker },
