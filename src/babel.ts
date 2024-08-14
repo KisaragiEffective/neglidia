@@ -3,13 +3,7 @@ import { Cast, make2, Values } from './types.js';
 
 function isNotPatternRelatedExpression<
 	A extends Values<babel.types.ObjectExpression["properties"]>
->(a: A): a is (
-	Cast<A, babel.types.ObjectProperty>
-	& {
-	value: {
-		type: Exclude<(Cast<A, babel.types.ObjectProperty>)["value"]["type"], PatternKinds>
-	}
-}) {
+>(a: A): a is DirectlyInitializedObjectExpression<A> {
 	return a.type === "ObjectProperty"
 		&& a.value.type !== "ArrayPattern"
 		&& a.value.type !== "AssignmentPattern"
@@ -17,6 +11,13 @@ function isNotPatternRelatedExpression<
 		&& a.value.type !== "RestElement";
 }
 
+type DirectlyInitializedObjectExpression<A> = (
+	Cast<A, babel.types.ObjectProperty>
+	& {
+	value: {
+		type: Exclude<(Cast<A, babel.types.ObjectProperty>)["value"]["type"], PatternKinds>
+	}
+});
 type PatternKinds = "ArrayPattern" | "AssignmentPattern" | "ObjectPattern" | "RestElement";
 
 /**
